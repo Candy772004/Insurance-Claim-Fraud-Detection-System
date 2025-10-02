@@ -1,0 +1,679 @@
+<!DOCTYPE html><html lang="en"><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Claim Fraud Detection System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        danger: '#EF4444',
+                        warning: '#F59E0B',
+                        success: '#10B981'
+                    }
+                }
+            }
+        }
+    </script>
+<script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.bd4eeeb8e8e02052ee92.js"></script></head>
+<body class="bg-white dark:bg-gray-900 min-h-screen">
+    <!-- Dark mode detection -->
+    <script>
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center mr-3">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Fraud Detection System</h1>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Insurance Claim Analysis Platform</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="hidden sm:flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                        <div class="w-2 h-2 bg-success rounded-full"></div>
+                        <span>Model Status: Active</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-8">
+                <button class="tab-btn py-4 px-2 border-b-2 border-primary text-primary font-medium text-sm" data-tab="analysis">
+                    Claim Analysis
+                </button>
+                <button class="tab-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium text-sm" data-tab="dashboard">
+                    Dashboard
+                </button>
+                <button class="tab-btn py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium text-sm" data-tab="history">
+                    Claim History
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Claim Analysis Tab -->
+        <div id="analysis" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Claim Input Form -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">New Claim Analysis</h2>
+                    
+                    <!-- Structured Data -->
+                    <div class="space-y-4 mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Structured Data</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Claim Amount ($)</label>
+                                <input type="number" id="claimAmount" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white" placeholder="50000">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Policy Age (months)</label>
+                                <input type="number" id="policyAge" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white" placeholder="24">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Previous Claims</label>
+                                <input type="number" id="previousClaims" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white" placeholder="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Claim Type</label>
+                                <select id="claimType" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white">
+                                    <option value="">Select type</option>
+                                    <option value="auto">Auto Accident</option>
+                                    <option value="property">Property Damage</option>
+                                    <option value="medical">Medical</option>
+                                    <option value="theft">Theft</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Unstructured Data -->
+                    <div class="space-y-4 mb-6">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Unstructured Data</h3>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Incident Description</label>
+                            <textarea id="incidentDescription" rows="4" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white" placeholder="Describe the incident in detail..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Customer Communication</label>
+                            <textarea id="customerCommunication" rows="3" class="w-full px-3 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-primary focus:border-primary dark:bg-gray-700 dark:text-white" placeholder="Any emails or messages from customer..."></textarea>
+                        </div>
+                    </div>
+
+                    <button onclick="analyzeClaim()" class="w-full bg-primary text-white py-3 px-4 rounded-lg hover:bg-purple-700 transition-colors font-medium">
+                        Analyze Claim for Fraud
+                    </button>
+                </div>
+
+                <!-- Results Panel -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Analysis Results</h2>
+                    
+                    <div id="resultsContainer" class="hidden">
+                        <!-- Fraud Score -->
+                        <div class="mb-6">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Fraud Probability</span>
+                                <span id="fraudScore" class="text-2xl font-bold">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                                <div id="fraudBar" class="h-3 rounded-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Risk Level -->
+                        <div id="riskLevel" class="p-4 rounded-lg mb-6">
+                            <div class="flex items-center">
+                                <div id="riskIcon" class="w-6 h-6 mr-3"></div>
+                                <div>
+                                    <h3 id="riskTitle" class="font-semibold"></h3>
+                                    <p id="riskDescription" class="text-sm opacity-90"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Risk Factors -->
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Risk Factors</h3>
+                            <div id="riskFactors" class="space-y-3"></div>
+                        </div>
+
+                        <!-- NLP Analysis -->
+                        <div id="nlpAnalysis" class="mb-6">
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Text Analysis</h3>
+                            <div id="nlpResults" class="space-y-2"></div>
+                        </div>
+
+                        <!-- Recommendations -->
+                        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                            <h3 class="text-lg font-medium text-blue-900 dark:text-blue-300 mb-2">Recommendations</h3>
+                            <ul id="recommendations" class="space-y-1 text-blue-800 dark:text-blue-300"></ul>
+                        </div>
+                    </div>
+
+                    <div id="noResults" class="text-center py-12 text-gray-500 dark:text-gray-400">
+                        <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <p>Enter claim details and click "Analyze" to see results</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Summary Cards -->
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Claims Processed</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">1,247</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Fraud Detected</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">23</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Savings</p>
+                            <p class="text-2xl font-bold text-gray-900 dark:text-white">$2.1M</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Fraud Detection Over Time</h3>
+                    <canvas id="fraudChart" width="400" height="200"></canvas>
+                </div>
+
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Risk Distribution</h3>
+                    <canvas id="riskChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history" class="tab-content hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Recent Claims</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Claim ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Risk Score</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="claimsTable" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                            <!-- Table content will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const targetTab = e.target.getAttribute('data-tab');
+                
+                // Update tab buttons
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('border-primary', 'text-primary');
+                    b.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400', 'dark:hover:text-gray-300');
+                });
+                e.target.classList.add('border-primary', 'text-primary');
+                e.target.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'dark:text-gray-400', 'dark:hover:text-gray-300');
+                
+                // Update tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                document.getElementById(targetTab).classList.remove('hidden');
+                
+                // Initialize charts if dashboard tab is selected
+                if (targetTab === 'dashboard') {
+                    setTimeout(() => {
+                        initCharts();
+                    }, 100);
+                }
+            });
+        });
+
+        // Suspicious keywords for NLP analysis
+        const suspiciousKeywords = [
+            'accident', 'total loss', 'fire', 'stolen', 'vandalism', 'emergency',
+            'urgent', 'immediate', 'hospital', 'police report', 'witness',
+            'suddenly', 'unexpectedly', 'completely destroyed', 'brand new'
+        ];
+
+        const fraudIndicators = [
+            'multiple recent claims', 'unusual claim patterns', 'inconsistent story',
+            'high claim amount', 'new policy', 'suspicious timing', 'lack of documentation'
+        ];
+
+        function analyzeClaim() {
+            const claimAmount = parseFloat(document.getElementById('claimAmount').value) || 0;
+            const policyAge = parseInt(document.getElementById('policyAge').value) || 0;
+            const previousClaims = parseInt(document.getElementById('previousClaims').value) || 0;
+            const claimType = document.getElementById('claimType').value;
+            const incidentDescription = document.getElementById('incidentDescription').value;
+            const customerCommunication = document.getElementById('customerCommunication').value;
+
+            // Calculate fraud score based on various factors
+            let fraudScore = 0;
+            let riskFactors = [];
+
+            // Amount-based scoring
+            if (claimAmount > 100000) {
+                fraudScore += 30;
+                riskFactors.push({ factor: 'High claim amount', weight: 'High', score: 30 });
+            } else if (claimAmount > 50000) {
+                fraudScore += 15;
+                riskFactors.push({ factor: 'Elevated claim amount', weight: 'Medium', score: 15 });
+            }
+
+            // Policy age scoring
+            if (policyAge < 6) {
+                fraudScore += 25;
+                riskFactors.push({ factor: 'New policy (< 6 months)', weight: 'High', score: 25 });
+            } else if (policyAge < 12) {
+                fraudScore += 10;
+                riskFactors.push({ factor: 'Recent policy (< 1 year)', weight: 'Medium', score: 10 });
+            }
+
+            // Previous claims scoring
+            if (previousClaims > 3) {
+                fraudScore += 20;
+                riskFactors.push({ factor: 'Multiple previous claims', weight: 'High', score: 20 });
+            } else if (previousClaims > 1) {
+                fraudScore += 5;
+                riskFactors.push({ factor: 'Some previous claims', weight: 'Low', score: 5 });
+            }
+
+            // NLP Analysis
+            const fullText = (incidentDescription + ' ' + customerCommunication).toLowerCase();
+            let suspiciousWords = [];
+            let nlpScore = 0;
+
+            suspiciousKeywords.forEach(keyword => {
+                if (fullText.includes(keyword)) {
+                    suspiciousWords.push(keyword);
+                    nlpScore += 5;
+                }
+            });
+
+            fraudScore += nlpScore;
+            if (nlpScore > 0) {
+                riskFactors.push({ factor: `Suspicious language patterns (${suspiciousWords.length} keywords)`, weight: nlpScore > 15 ? 'High' : 'Medium', score: nlpScore });
+            }
+
+            // Cap at 100%
+            fraudScore = Math.min(fraudScore, 100);
+
+            // Display results
+            displayResults(fraudScore, riskFactors, suspiciousWords);
+        }
+
+        function displayResults(fraudScore, riskFactors, suspiciousWords) {
+            document.getElementById('noResults').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.remove('hidden');
+
+            // Update fraud score
+            document.getElementById('fraudScore').textContent = fraudScore + '%';
+            
+            const fraudBar = document.getElementById('fraudBar');
+            fraudBar.style.width = fraudScore + '%';
+            
+            // Color coding
+            if (fraudScore >= 70) {
+                fraudBar.className = 'h-3 rounded-full transition-all duration-1000 ease-out bg-red-500';
+            } else if (fraudScore >= 40) {
+                fraudBar.className = 'h-3 rounded-full transition-all duration-1000 ease-out bg-yellow-500';
+            } else {
+                fraudBar.className = 'h-3 rounded-full transition-all duration-1000 ease-out bg-green-500';
+            }
+
+            // Update risk level
+            const riskLevel = document.getElementById('riskLevel');
+            const riskIcon = document.getElementById('riskIcon');
+            const riskTitle = document.getElementById('riskTitle');
+            const riskDescription = document.getElementById('riskDescription');
+
+            if (fraudScore >= 70) {
+                riskLevel.className = 'p-4 rounded-lg mb-6 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800';
+                riskIcon.innerHTML = '<svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>';
+                riskTitle.textContent = 'HIGH RISK - Requires Manual Review';
+                riskTitle.className = 'font-semibold text-red-800 dark:text-red-300';
+                riskDescription.textContent = 'This claim shows multiple fraud indicators and should be investigated immediately.';
+                riskDescription.className = 'text-sm opacity-90 text-red-700 dark:text-red-400';
+            } else if (fraudScore >= 40) {
+                riskLevel.className = 'p-4 rounded-lg mb-6 bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800';
+                riskIcon.innerHTML = '<svg class="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>';
+                riskTitle.textContent = 'MEDIUM RISK - Additional Review Recommended';
+                riskTitle.className = 'font-semibold text-yellow-800 dark:text-yellow-300';
+                riskDescription.textContent = 'This claim has some suspicious characteristics that warrant closer examination.';
+                riskDescription.className = 'text-sm opacity-90 text-yellow-700 dark:text-yellow-400';
+            } else {
+                riskLevel.className = 'p-4 rounded-lg mb-6 bg-green-100 dark:bg-green-900/30 border border-green-200 dark:border-green-800';
+                riskIcon.innerHTML = '<svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                riskTitle.textContent = 'LOW RISK - Standard Processing';
+                riskTitle.className = 'font-semibold text-green-800 dark:text-green-300';
+                riskDescription.textContent = 'This claim appears legitimate and can proceed through normal processing.';
+                riskDescription.className = 'text-sm opacity-90 text-green-700 dark:text-green-400';
+            }
+
+            // Display risk factors
+            const riskFactorsContainer = document.getElementById('riskFactors');
+            riskFactorsContainer.innerHTML = '';
+            
+            riskFactors.forEach(factor => {
+                const factorDiv = document.createElement('div');
+                factorDiv.className = 'flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg';
+                
+                const weightColor = factor.weight === 'High' ? 'text-red-600 dark:text-red-400' : 
+                                   factor.weight === 'Medium' ? 'text-yellow-600 dark:text-yellow-400' : 
+                                   'text-green-600 dark:text-green-400';
+                
+                factorDiv.innerHTML = `
+                    <span class="text-gray-900 dark:text-white">${factor.factor}</span>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm ${weightColor} font-medium">${factor.weight}</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">+${factor.score}%</span>
+                    </div>
+                `;
+                riskFactorsContainer.appendChild(factorDiv);
+            });
+
+            // NLP Analysis results
+            const nlpResults = document.getElementById('nlpResults');
+            nlpResults.innerHTML = '';
+            
+            if (suspiciousWords.length > 0) {
+                const nlpDiv = document.createElement('div');
+                nlpDiv.className = 'p-3 bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800 rounded-lg';
+                nlpDiv.innerHTML = `
+                    <p class="text-orange-800 dark:text-orange-300 font-medium">Suspicious Keywords Detected:</p>
+                    <p class="text-orange-700 dark:text-orange-400 text-sm mt-1">${suspiciousWords.join(', ')}</p>
+                `;
+                nlpResults.appendChild(nlpDiv);
+            } else {
+                const nlpDiv = document.createElement('div');
+                nlpDiv.className = 'p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-lg';
+                nlpDiv.innerHTML = `
+                    <p class="text-green-800 dark:text-green-300 font-medium">No Suspicious Language Patterns Detected</p>
+                `;
+                nlpResults.appendChild(nlpDiv);
+            }
+
+            // Recommendations
+            const recommendations = document.getElementById('recommendations');
+            recommendations.innerHTML = '';
+            
+            const recs = [];
+            if (fraudScore >= 70) {
+                recs.push('Immediate manual investigation required');
+                recs.push('Contact customer for additional documentation');
+                recs.push('Verify all provided information independently');
+                recs.push('Consider involving special investigation unit');
+            } else if (fraudScore >= 40) {
+                recs.push('Request additional documentation');
+                recs.push('Verify key details with third parties');
+                recs.push('Review customer\'s claim history in detail');
+            } else {
+                recs.push('Process through standard workflow');
+                recs.push('Routine documentation review');
+                recs.push('Standard verification procedures');
+            }
+            
+            recs.forEach(rec => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center';
+                li.innerHTML = `
+                    <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    ${rec}
+                `;
+                recommendations.appendChild(li);
+            });
+
+            // Add to history
+            addToHistory(fraudScore, riskFactors);
+        }
+
+        function addToHistory(fraudScore, riskFactors) {
+            const claimAmount = document.getElementById('claimAmount').value || '0';
+            const claimType = document.getElementById('claimType').value || 'Unknown';
+            
+            const history = JSON.parse(localStorage.getItem('claimHistory') || '[]');
+            const newClaim = {
+                id: 'CLM-' + Date.now().toString().substr(-6),
+                amount: '$' + parseInt(claimAmount).toLocaleString(),
+                type: claimType,
+                riskScore: fraudScore,
+                status: fraudScore >= 70 ? 'Under Investigation' : fraudScore >= 40 ? 'Additional Review' : 'Approved',
+                date: new Date().toLocaleDateString()
+            };
+            
+            history.unshift(newClaim);
+            if (history.length > 20) history.pop(); // Keep only latest 20
+            
+            try {
+                localStorage.setItem('claimHistory', JSON.stringify(history));
+            } catch (e) {
+                // LocalStorage not available in iframe - that's ok
+            }
+            
+            updateHistoryTable();
+        }
+
+        function updateHistoryTable() {
+            const sampleData = [
+                { id: 'CLM-789123', amount: '$75,000', type: 'Auto Accident', riskScore: 85, status: 'Under Investigation', date: '2024-01-15' },
+                { id: 'CLM-456789', amount: '$25,000', type: 'Property Damage', riskScore: 25, status: 'Approved', date: '2024-01-14' },
+                { id: 'CLM-234567', amount: '$120,000', type: 'Theft', riskScore: 92, status: 'Under Investigation', date: '2024-01-13' },
+                { id: 'CLM-345678', amount: '$8,500', type: 'Medical', riskScore: 15, status: 'Approved', date: '2024-01-12' },
+                { id: 'CLM-567890', amount: '$45,000', type: 'Auto Accident', riskScore: 55, status: 'Additional Review', date: '2024-01-11' }
+            ];
+            
+            let history = [];
+            try {
+                history = JSON.parse(localStorage.getItem('claimHistory') || '[]');
+            } catch (e) {
+                // Use sample data if localStorage not available
+            }
+            
+            const allData = [...history, ...sampleData];
+            
+            const tbody = document.getElementById('claimsTable');
+            tbody.innerHTML = '';
+            
+            allData.slice(0, 10).forEach(claim => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 dark:hover:bg-gray-700';
+                
+                const statusColor = claim.riskScore >= 70 ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' :
+                                   claim.riskScore >= 40 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                                   'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">${claim.id}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${claim.amount}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${claim.type}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${claim.riskScore}%</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full ${statusColor}">
+                            ${claim.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">${claim.date}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function initCharts() {
+            // Fraud Detection Over Time Chart
+            const fraudCtx = document.getElementById('fraudChart');
+            if (fraudCtx && !fraudCtx.chartInstance) {
+                const isDark = document.documentElement.classList.contains('dark');
+                
+                fraudCtx.chartInstance = new Chart(fraudCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Fraud Cases Detected',
+                            data: [12, 19, 8, 15, 23, 18],
+                            borderColor: '#EF4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            tension: 0.4
+                        }, {
+                            label: 'Total Claims',
+                            data: [200, 250, 180, 220, 280, 240],
+                            borderColor: '#5D5CDE',
+                            backgroundColor: 'rgba(93, 92, 222, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: isDark ? '#D1D5DB' : '#374151'
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    color: isDark ? '#D1D5DB' : '#374151'
+                                },
+                                grid: {
+                                    color: isDark ? '#374151' : '#E5E7EB'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: isDark ? '#D1D5DB' : '#374151'
+                                },
+                                grid: {
+                                    color: isDark ? '#374151' : '#E5E7EB'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Risk Distribution Chart
+            const riskCtx = document.getElementById('riskChart');
+            if (riskCtx && !riskCtx.chartInstance) {
+                const isDark = document.documentElement.classList.contains('dark');
+                
+                riskCtx.chartInstance = new Chart(riskCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+                        datasets: [{
+                            data: [1180, 44, 23],
+                            backgroundColor: ['#10B981', '#F59E0B', '#EF4444']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: isDark ? '#D1D5DB' : '#374151'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize history table on load
+        updateHistoryTable();
+
+        // Sample data for demonstration
+        document.getElementById('claimAmount').value = '85000';
+        document.getElementById('policyAge').value = '3';
+        document.getElementById('previousClaims').value = '2';
+        document.getElementById('claimType').value = 'auto';
+        document.getElementById('incidentDescription').value = 'The accident happened suddenly when I was driving home. The car was completely destroyed in the fire that started immediately after impact. I need urgent help with this total loss.';
+        document.getElementById('customerCommunication').value = 'Please process this claim as soon as possible. I have multiple hospital bills and need immediate assistance.';
+    </script>
+
+
+</body></html>
